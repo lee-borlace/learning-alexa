@@ -19,31 +19,32 @@ namespace AlexaAzureTest1.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]SkillRequest request)
         {
+            var requestType = request.GetRequestType();
+
+            if (requestType == typeof(IntentRequest))
+            {
+                return GetSpeechResponse("Handling intent.");
+            }
+            else if (requestType == typeof(Alexa.NET.Request.Type.LaunchRequest))
+            {
+                return GetSpeechResponse("Launched.");
+            }
+            else if (requestType == typeof(AudioPlayerRequest))
+            {
+                return GetSpeechResponse("Doing audio stuff");
+            }
+            else
+            {
+                return GetSpeechResponse("Couldn't work out request type so I'm saying these words.");
+            }
+        }
+
+        private IActionResult GetSpeechResponse(string text)
+        {
             var speech = new Alexa.NET.Response.SsmlOutputSpeech();
-            speech.Ssml = "<speak>Hello World!</speak>";
+            speech.Ssml = $"<speak>{text}</speak>";
             var finalResponse = ResponseBuilder.Tell(speech);
             return Ok(finalResponse);
-
-            // check what type of a request it is like an IntentRequest or a LaunchRequest
-            //var requestType = request.GetRequestType();
-
-            //if (requestType == typeof(IntentRequest))
-            //{
-            //    var speech = new Alexa.NET.Response.SsmlOutputSpeech();
-            //    speech.Ssml = "<speak>Hello World!</speak>";
-            //    var finalResponse = ResponseBuilder.Tell(speech);
-            //    return Ok(finalResponse);
-            //}
-            //else if (requestType == typeof(Alexa.NET.Request.Type.LaunchRequest))
-            //{
-            //    ResponseBuilder.
-            //}
-            //else if (requestType == typeof(AudioPlayerRequest))
-            //{
-            //    // do some audio response stuff
-            //}
-
-
         }
     }
 }
