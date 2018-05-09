@@ -1,4 +1,8 @@
-﻿# Running Locally
+﻿# Links
+https://github.com/timheuer/alexa-skills-dotnet
+https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html
+
+# Running Locally
 1. Install ngrok.
 2. Run this project.
 3. Run ```ngrok http -bind-tls=true -host-header=rewrite 61979```. 

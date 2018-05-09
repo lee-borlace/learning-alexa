@@ -23,11 +23,11 @@ namespace AlexaAzureTest1.Web.Controllers
 
             if (requestType == typeof(IntentRequest))
             {
-                return GetSpeechResponse("Handling intent.");
+                return HandleIntent(request.Request as IntentRequest);
             }
             else if (requestType == typeof(Alexa.NET.Request.Type.LaunchRequest))
             {
-                return GetSpeechResponse("Launched.");
+                return GetPromptForInputResponse("OK let's start with what would you like to do?", "Sorry, I didn't hear you say anything. What would you like to do?");
             }
             else if (requestType == typeof(AudioPlayerRequest))
             {
@@ -39,12 +39,43 @@ namespace AlexaAzureTest1.Web.Controllers
             }
         }
 
+        private IActionResult HandleIntent(IntentRequest intentRequest)
+        {
+            switch(intentRequest.Intent.Name)
+            {
+                case "Something":
+                    return GetSpeechResponse("Roger that, doing something.");
+                    break;
+                case "Nothing":
+                    return GetSpeechResponse("Roger that, doing nothing.");
+                    break;
+                default:
+                    return GetSpeechResponse("Hmm, couldn't work out what you want sorry.");
+                    break;
+            }
+        }
+
         private IActionResult GetSpeechResponse(string text)
         {
             var speech = new Alexa.NET.Response.SsmlOutputSpeech();
             speech.Ssml = $"<speak>{text}</speak>";
             var finalResponse = ResponseBuilder.Tell(speech);
             return Ok(finalResponse);
+        }
+
+        private IActionResult GetPromptForInputResponse(string prompt, string reprompt)
+        {
+            var speech = new Alexa.NET.Response.SsmlOutputSpeech();
+            speech.Ssml = $"<speak>{prompt}</speak>";
+
+            var repromptMessage = new Alexa.NET.Response.PlainTextOutputSpeech();
+            repromptMessage.Text = reprompt;
+            var repromptBody = new Alexa.NET.Response.Reprompt();
+            repromptBody.OutputSpeech = repromptMessage;
+
+            var finalResponse = ResponseBuilder.Ask(speech, repromptBody);
+            return Ok(finalResponse);
+
         }
     }
 }

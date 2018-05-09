@@ -1,36 +1,46 @@
 {
-  "interactionModel": {
-    "languageModel": {
-      "invocationName": "lee azure test",
-      "intents": [
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": [
-            "cancel"
-          ]
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": [
-            "help"
-          ]
-        },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": [
-            "stop"
-          ]
-        },
-        {
-          "name": "DoSomething",
-          "slots": [],
-          "samples": [
-            "do a thing",
-            "do something"
-          ]
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "lee azure test",
+          "intents": [
+            {
+              "name": "AMAZON.CancelIntent",
+              "samples": [
+                "cancel"
+              ]
+            },
+            {
+              "name": "AMAZON.HelpIntent",
+              "samples": [
+                "help"
+              ]
+            },
+            {
+              "name": "AMAZON.StopIntent",
+              "samples": [
+                "stop"
+              ]
+            },
+            {
+              "name": "Something",
+              "slots": [],
+              "samples": [
+                "a thing",
+                "some thing",
+                "something"
+              ]
+            },
+            {
+              "name": "Nothing",
+              "slots": [],
+              "samples": [
+                "not a thing",
+                "no thing",
+                "nothing"
+              ]
+            }
+          ],
+            "types": []
         }
-      ],
-      "types": []
     }
-  }
 }
