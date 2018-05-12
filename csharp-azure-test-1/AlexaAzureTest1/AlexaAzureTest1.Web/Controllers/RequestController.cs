@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Alexa.NET;
 using Alexa.NET.Request;
@@ -27,7 +29,7 @@ namespace AlexaAzureTest1.Web.Controllers
             }
             else if (requestType == typeof(Alexa.NET.Request.Type.LaunchRequest))
             {
-                return GetPromptForInputResponse("OK let's start with what would you like to do?", "Sorry, I didn't hear you say anything. What would you like to do?");
+                return GetPromptForInputResponse("What would you like to do?", "Sorry, I didn't hear you say anything. What would you like to do?");
             }
             else if (requestType == typeof(AudioPlayerRequest))
             {
@@ -41,8 +43,10 @@ namespace AlexaAzureTest1.Web.Controllers
 
         private IActionResult HandleIntent(IntentRequest intentRequest)
         {
-            switch(intentRequest.Intent.Name)
+            switch (intentRequest.Intent.Name)
             {
+                case "InvoiceStatus":
+                    return GetInvoiceStatusResponse(intentRequest);
                 case "Something":
                     return GetSpeechResponse("Roger that, doing something.");
                     break;
@@ -54,6 +58,62 @@ namespace AlexaAzureTest1.Web.Controllers
                     break;
             }
         }
+
+        private IActionResult GetInvoiceStatusResponse(IntentRequest intentRequest)
+        {
+            const string InvoiceNumberKey = "InvoiceNumber";
+
+            string message = string.Empty;
+
+            if (
+                intentRequest.Intent != null &&
+                intentRequest.Intent.Slots != null &&
+                intentRequest.Intent.Slots.ContainsKey(InvoiceNumberKey)
+            )
+            {
+                var invoiceNumber = intentRequest.Intent.Slots[InvoiceNumberKey].Value;
+
+                Trace.TraceInformation($"Invoice number = {invoiceNumber}.");
+
+                message = $"Status of invoice {ConvertInvoiceNumberForSpeech(invoiceNumber)} is open.";
+            }
+            else
+            {
+                Trace.TraceInformation("No invoice number found.");
+                message = "Sorry, I didn't get the invoice number.";
+            }
+
+            return GetPromptForInputResponse($"{message} What would you like to do now?", "Sorry, I didn't hear you say anything. What would you like to do now?");
+        }
+
+        private string ConvertInvoiceNumberForSpeech(string invoiceNumber)
+        {
+            var sb = new StringBuilder();
+
+            for (int i = 0; i < invoiceNumber.Length; i++)
+            {
+                sb.Append(invoiceNumber[i]);
+
+                if (i < invoiceNumber.Length - 1)
+                {
+                    if (!IsNumber(invoiceNumber[i + 1])
+                        || (!IsNumber(invoiceNumber[i]) && IsNumber(invoiceNumber[i + 1]))
+                        )
+                    {
+                        sb.Append(",");
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+
+
+        private bool IsNumber(char c)
+        {
+            return c >= '0' && c <= '9';
+        }
+
 
         private IActionResult GetSpeechResponse(string text)
         {

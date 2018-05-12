@@ -1,46 +1,116 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "lee azure test",
-          "intents": [
-            {
-              "name": "AMAZON.CancelIntent",
-              "samples": [
-                "cancel"
-              ]
-            },
-            {
-              "name": "AMAZON.HelpIntent",
-              "samples": [
-                "help"
-              ]
-            },
-            {
-              "name": "AMAZON.StopIntent",
-              "samples": [
-                "stop"
-              ]
-            },
-            {
-              "name": "Something",
-              "slots": [],
-              "samples": [
-                "a thing",
-                "some thing",
-                "something"
-              ]
-            },
-            {
-              "name": "Nothing",
-              "slots": [],
-              "samples": [
-                "not a thing",
-                "no thing",
-                "nothing"
-              ]
-            }
-          ],
+            "invocationName": "lee azure test local",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": [
+                        "cancel"
+                    ]
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": [
+                        "help"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": [
+                        "stop"
+                    ]
+                },
+                {
+                    "name": "Something",
+                    "slots": [],
+                    "samples": [
+                        "a thing",
+                        "some thing",
+                        "something"
+                    ]
+                },
+                {
+                    "name": "Nothing",
+                    "slots": [],
+                  "samples": [
+                    "not a thing",
+                    "no thing",
+                    "nothing"
+                  ]
+                },
+                {
+                    "name": "InvoiceStatus",
+                    "slots": [
+                        {
+                            "name": "InvoiceNumber",
+                            "type": "AMAZON.SearchQuery",
+                            "samples": [
+                                "{InvoiceNumber}",
+                                "I'm looking for {InvoiceNumber}",
+                                "it's {InvoiceNumber}",
+                                "invoice {InvoiceNumber}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "what is my invoice status",
+                        "get my invoice status",
+                        "get invoice status",
+                        "what's invoice {InvoiceNumber} status",
+                        "invoice {InvoiceNumber}",
+                        "status invoice {InvoiceNumber}",
+                        "status of invoice {InvoiceNumber}",
+                        "what's the status of invoice {InvoiceNumber}"
+                    ]
+                }
+            ],
             "types": []
-        }
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "InvoiceStatus",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "InvoiceNumber",
+                            "type": "AMAZON.SearchQuery",
+                            "confirmationRequired": true,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "confirmation": "Confirm.Slot.1103847125025.1210557244109",
+                                "elicitation": "Elicit.Slot.1103847125025.1210557244109"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1103847125025.1210557244109",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Can you please give me the invoice number?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "What is the invoice number please?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.1103847125025.1210557244109",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "The invoice number I heard was {InvoiceNumber} . Is that correct?"
+                    }
+                ]
+            }
+        ]
     }
 }
