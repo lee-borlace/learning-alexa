@@ -29,7 +29,7 @@ namespace AlexaAzureTest1.Web.Controllers
             }
             else if (requestType == typeof(Alexa.NET.Request.Type.LaunchRequest))
             {
-                return GetPromptForInputResponse("What would you like to do?", "Sorry, I didn't hear you say anything. What would you like to do?");
+                return GetPromptForInputResponse("Hi! How can I help?", "Sorry, I didn't hear you say anything. How can I help you today?");
             }
             else if (requestType == typeof(AudioPlayerRequest))
             {
@@ -37,7 +37,7 @@ namespace AlexaAzureTest1.Web.Controllers
             }
             else
             {
-                return GetSpeechResponse("Couldn't work out request type so I'm saying these words.");
+                return GetSpeechResponse("Hmm something has gone wrong. I got an unexpected request type.");
             }
         }
 
@@ -45,6 +45,15 @@ namespace AlexaAzureTest1.Web.Controllers
         {
             switch (intentRequest.Intent.Name)
             {
+                case "AMAZON.CancelIntent":
+                case "AMAZON.StopIntent":
+                    return GetSpeechResponse("Bye!");
+                    break;
+                case "AMAZON.HelpIntent":
+                    return GetPromptForInputResponse("I can help you check an invoice status or create a purchase order. I can also do something. Also nothing. How can I help you?", "Sorry, I didn't hear you say anything. How can I help you?");
+                    break;
+                case "CreatePurchaseOrder":
+                    return GetCreatePurchaseOrderResponse(intentRequest);
                 case "InvoiceStatus":
                     return GetInvoiceStatusResponse(intentRequest);
                 case "Something":
@@ -53,38 +62,71 @@ namespace AlexaAzureTest1.Web.Controllers
                 case "Nothing":
                     return GetSpeechResponse("Roger that, doing nothing.");
                     break;
+                case "AMAZON.FallbackIntent":
                 default:
-                    return GetSpeechResponse("Hmm, couldn't work out what you want sorry.");
+                    return GetSpeechResponse("Hmm, I couldn't work out what you want, sorry. Have a nice day!");
                     break;
+            }
+        }
+
+        private IActionResult GetCreatePurchaseOrderResponse(IntentRequest intentRequest)
+        {
+            // If dialog has state STARTED or IN_PROGRESS, then delegate back to Alexa to elicit and confirm the slots and confirm the whole intent.
+            if (intentRequest.DialogState.Equals(DialogState.Started) || intentRequest.DialogState.Equals(DialogState.InProgress))
+            {
+                return Ok(ResponseBuilder.DialogDelegate());
+            }
+            // Otherwise, check whether the user confirmed the entire intent. Complete the request if so, otherwise fail it.
+            else
+            {
+                string message;
+
+                if (intentRequest.Intent.ConfirmationStatus == ConfirmationStatus.Confirmed)
+                {
+                    message = "Your purchase order is ready. I've emailed you a link.";
+                }
+                else
+                {
+                    message = "OK, let me know if you want to create a purchase order later.";
+                }
+
+                return GetPromptForInputResponse($"{message} What would you like to do now?", "Sorry, I didn't hear you say anything. What would you like to do now?");
             }
         }
 
         private IActionResult GetInvoiceStatusResponse(IntentRequest intentRequest)
         {
-            const string InvoiceNumberKey = "InvoiceNumber";
-
-            string message = string.Empty;
-
-            if (
-                intentRequest.Intent != null &&
-                intentRequest.Intent.Slots != null &&
-                intentRequest.Intent.Slots.ContainsKey(InvoiceNumberKey)
-            )
+            // If dialog has state STARTED or IN_PROGRESS, then delegate back to Alexa to elicit and confirm the slots and confirm the whole intent.
+            if (intentRequest.DialogState.Equals(DialogState.Started) || intentRequest.DialogState.Equals(DialogState.InProgress))
             {
-                var invoiceNumber = intentRequest.Intent.Slots[InvoiceNumberKey].Value;
+                return Ok(ResponseBuilder.DialogDelegate());
+            }
+            // Otherwise, check whether the user confirmed the entire intent. Complete the request if so, otherwise fail it.
+            else
+            {
+                var invoiceNumber = GetSlotValue("InvoiceNumber", intentRequest);
+                var message = "The status of that invoice is open.";
+                return GetPromptForInputResponse($"{message} How can I help now?", "Sorry, I didn't hear you say anything. How can I help now?");
+            }
+        }
 
-                Trace.TraceInformation($"Invoice number = {invoiceNumber}.");
 
-                message = $"Status of invoice {ConvertInvoiceNumberForSpeech(invoiceNumber)} is open.";
+        private string GetSlotValue(string slotName, IntentRequest intentRequest)
+        {
+            if (
+               intentRequest.Intent != null &&
+               intentRequest.Intent.Slots != null &&
+               intentRequest.Intent.Slots.ContainsKey(slotName)
+           )
+            {
+                return intentRequest.Intent.Slots[slotName].Value;
             }
             else
             {
-                Trace.TraceInformation("No invoice number found.");
-                message = "Sorry, I didn't get the invoice number.";
+                return null;
             }
-
-            return GetPromptForInputResponse($"{message} What would you like to do now?", "Sorry, I didn't hear you say anything. What would you like to do now?");
         }
+
 
         private string ConvertInvoiceNumberForSpeech(string invoiceNumber)
         {

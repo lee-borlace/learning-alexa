@@ -1,17 +1,24 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "lee azure test local",
+            "invocationName": "lee azure test",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
                     "samples": [
+                        "don't worry",
+                        "nevermind",
+                        "never mind",
                         "cancel"
                     ]
                 },
                 {
                     "name": "AMAZON.HelpIntent",
                     "samples": [
+                        "what can you help me with",
+                        "what can I do",
+                        "what can you do",
+                        "help me",
                         "help"
                     ]
                 },
@@ -20,24 +27,6 @@
                     "samples": [
                         "stop"
                     ]
-                },
-                {
-                    "name": "Something",
-                    "slots": [],
-                    "samples": [
-                        "a thing",
-                        "some thing",
-                        "something"
-                    ]
-                },
-                {
-                    "name": "Nothing",
-                    "slots": [],
-                  "samples": [
-                    "not a thing",
-                    "no thing",
-                    "nothing"
-                  ]
                 },
                 {
                     "name": "InvoiceStatus",
@@ -54,6 +43,10 @@
                         }
                     ],
                     "samples": [
+                        "get the status of an invoice",
+                        "get status of an invoice",
+                        "get an invoice status",
+                        "invoice status",
                         "what is my invoice status",
                         "get my invoice status",
                         "get invoice status",
@@ -62,6 +55,61 @@
                         "status invoice {InvoiceNumber}",
                         "status of invoice {InvoiceNumber}",
                         "what's the status of invoice {InvoiceNumber}"
+                    ]
+                },
+                {
+                    "name": "CreatePurchaseOrder",
+                    "slots": [
+                        {
+                            "name": "Supplier",
+                            "type": "AMAZON.SearchQuery",
+                            "samples": [
+                                "it should be {Supplier}",
+                                "it's {Supplier}",
+                                "{Supplier}",
+                                "use {Supplier}",
+                                "I'll use {Supplier}",
+                                "supplier {Supplier}"
+                            ]
+                        },
+                        {
+                            "name": "ContactPerson",
+                            "type": "AMAZON.FirstName",
+                            "samples": [
+                                "just {ContactPerson}",
+                                "{ContactPerson}",
+                                "it would be {ContactPerson}",
+                                "it's {ContactPerson}"
+                            ]
+                        },
+                        {
+                            "name": "Date",
+                            "type": "AMAZON.DATE",
+                            "samples": [
+                                "it should be {Date}",
+                                "use {Date}",
+                                "{Date}"
+                            ]
+                        },
+                        {
+                            "name": "Value",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "{Value} bucks",
+                                "make it for {Value}",
+                                "it should be {Value}",
+                                "{Value}",
+                                "{Value} dollars"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "create a purchase order against supplier {Supplier}",
+                        "create a purchase order for {Supplier}",
+                        "create a purchase order please",
+                        "do a purchase order",
+                        "new purchase order",
+                        "create a purchase order"
                     ]
                 }
             ],
@@ -85,29 +133,139 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "CreatePurchaseOrder",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.447540234527"
+                    },
+                    "slots": [
+                        {
+                            "name": "Supplier",
+                            "type": "AMAZON.SearchQuery",
+                            "confirmationRequired": true,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "confirmation": "Confirm.Slot.447540234527.1114384811704",
+                                "elicitation": "Elicit.Slot.447540234527.1114384811704"
+                            }
+                        },
+                        {
+                            "name": "ContactPerson",
+                            "type": "AMAZON.FirstName",
+                            "confirmationRequired": true,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "confirmation": "Confirm.Slot.447540234527.19313272302",
+                                "elicitation": "Elicit.Slot.447540234527.19313272302"
+                            }
+                        },
+                        {
+                            "name": "Date",
+                            "type": "AMAZON.DATE",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.447540234527.900172774679"
+                            }
+                        },
+                        {
+                            "name": "Value",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.447540234527.1421962152243"
+                            }
+                        }
+                    ]
                 }
             ]
         },
         "prompts": [
-            {
-                "id": "Elicit.Slot.1103847125025.1210557244109",
-                "variations": [
-                    {
-                        "type": "PlainText",
-                        "value": "Can you please give me the invoice number?"
-                    },
-                    {
-                        "type": "PlainText",
-                        "value": "What is the invoice number please?"
-                    }
-                ]
-            },
+          {
+            "id": "Elicit.Slot.1103847125025.1210557244109",
+            "variations": [
+              {
+                "type": "PlainText",
+                "value": "Can you please give me the invoice number?"
+              },
+              {
+                "type": "PlainText",
+                "value": "What is the invoice number please?"
+              }
+            ]
+          },
             {
                 "id": "Confirm.Slot.1103847125025.1210557244109",
                 "variations": [
                     {
                         "type": "PlainText",
                         "value": "The invoice number I heard was {InvoiceNumber} . Is that correct?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Intent.447540234527",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I'm going to create a purchase order for {Value} dollars against supplier {Supplier} for {Date} . The contact person will be {ContactPerson} . Does that sound OK?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.447540234527.1114384811704",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Which supplier would you like to use?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.447540234527.1114384811704",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I heard {Supplier} . Is that correct?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.447540234527.19313272302",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What's the first name of the contact person?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.447540234527.19313272302",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "I heard {ContactPerson} . Is that right?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.447540234527.1421962152243",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What's the value of the purchase order in Australian dollars?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.447540234527.900172774679",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What date will the purchase order be for?"
                     }
                 ]
             }
