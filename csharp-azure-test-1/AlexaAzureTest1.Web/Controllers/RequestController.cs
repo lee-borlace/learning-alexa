@@ -81,9 +81,10 @@ namespace AlexaAzureTest1.Web.Controllers
 
                 if (intentRequest.Intent.ConfirmationStatus == ConfirmationStatus.Confirmed)
                 {
-                    message = "Your purchase order is ready. I've emailed you a link.";
+                    await SendProgressiveResponse("OK, creating it now.", skillRequest);
+                    await Task.Delay(3500);
 
-                    await SendProgressiveResponse(skillRequest);
+                    message = "Your purchase order is ready. I've emailed you a link.";
                 }
                 else
                 {
@@ -94,9 +95,17 @@ namespace AlexaAzureTest1.Web.Controllers
             }
         }
 
-        private async Task SendProgressiveResponse(SkillRequest skillRequest)
+        private async Task SendProgressiveResponse(string message, SkillRequest skillRequest)
         {
-            
+            try
+            {
+                if (ProgressiveResponse.IsSupported(skillRequest))
+                {
+                    var progressiveReponse = new ProgressiveResponse(skillRequest);
+                    await progressiveReponse.SendSpeech(message);
+                }
+            }
+            catch { }
         }
 
         private async Task<IActionResult> GetInvoiceStatusResponse(SkillRequest skillRequest)
@@ -111,6 +120,9 @@ namespace AlexaAzureTest1.Web.Controllers
             // Otherwise, check whether the user confirmed the entire intent. Complete the request if so, otherwise fail it.
             else
             {
+                await SendProgressiveResponse("Just checking now.", skillRequest);
+                await Task.Delay(3500);
+
                 var invoiceNumber = GetSlotValue("InvoiceNumber", intentRequest);
                 var message = "The status of that invoice is open.";
                 return GetPromptForInputResponse($"{message} How can I help now?", "Sorry, I didn't hear you say anything. How can I help now?");
