@@ -50,18 +50,12 @@ namespace AlexaAzureTest1.Web.Controllers
                     return GetSpeechResponse("Bye!");
                     break;
                 case "AMAZON.HelpIntent":
-                    return GetPromptForInputResponse("I can help you check an invoice status or create a purchase order. I can also do something. Also nothing. How can I help you?", "Sorry, I didn't hear you say anything. How can I help you?");
+                    return GetPromptForInputResponse("I can help you check an invoice status or create a purchase order. How can I help you?", "Sorry, I didn't hear you say anything. How can I help you?");
                     break;
                 case "CreatePurchaseOrder":
                     return GetCreatePurchaseOrderResponse(intentRequest);
                 case "InvoiceStatus":
                     return GetInvoiceStatusResponse(intentRequest);
-                case "Something":
-                    return GetSpeechResponse("Roger that, doing something.");
-                    break;
-                case "Nothing":
-                    return GetSpeechResponse("Roger that, doing nothing.");
-                    break;
                 case "AMAZON.FallbackIntent":
                 default:
                     return GetSpeechResponse("Hmm, I couldn't work out what you want, sorry. Have a nice day!");
