@@ -1,4 +1,9 @@
-﻿# Running Locally
+# Description
+This project tests out a few concepts such as dialogs and intents. It can simulate doing these things :
+- Create a purchase order
+- Get invoice status
+ 
+# Running Locally
 1. Install ngrok and get it set up for your ngrok account.
 2. Run this project.
 3. Run ```ngrok http -bind-tls=true -host-header=rewrite 61979``` (if you're using VS2017) or ```ngrok http -bind-tls=true -host-header=rewrite 5000``` (if you're using VS Code)
