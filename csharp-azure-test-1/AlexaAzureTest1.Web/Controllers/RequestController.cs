@@ -25,7 +25,7 @@ namespace AlexaAzureTest1.Web.Controllers
 
             if (requestType == typeof(IntentRequest))
             {
-                return HandleIntent(request.Request as IntentRequest);
+                return await HandleIntent(request);
             }
             else if (requestType == typeof(Alexa.NET.Request.Type.LaunchRequest))
             {
@@ -41,8 +41,10 @@ namespace AlexaAzureTest1.Web.Controllers
             }
         }
 
-        private IActionResult HandleIntent(IntentRequest intentRequest)
+        private async Task<IActionResult> HandleIntent(SkillRequest skillRequest)
         {
+            var intentRequest = skillRequest.Request as IntentRequest;
+
             switch (intentRequest.Intent.Name)
             {
                 case "AMAZON.CancelIntent":
@@ -53,9 +55,9 @@ namespace AlexaAzureTest1.Web.Controllers
                     return GetPromptForInputResponse("I can help you check an invoice status or create a purchase order. How can I help you?", "Sorry, I didn't hear you say anything. How can I help you?");
                     break;
                 case "CreatePurchaseOrder":
-                    return GetCreatePurchaseOrderResponse(intentRequest);
+                    return await GetCreatePurchaseOrderResponse(skillRequest);
                 case "InvoiceStatus":
-                    return GetInvoiceStatusResponse(intentRequest);
+                    return await GetInvoiceStatusResponse(skillRequest);
                 case "AMAZON.FallbackIntent":
                 default:
                     return GetSpeechResponse("Hmm, I couldn't work out what you want, sorry. Have a nice day!");
@@ -63,8 +65,10 @@ namespace AlexaAzureTest1.Web.Controllers
             }
         }
 
-        private IActionResult GetCreatePurchaseOrderResponse(IntentRequest intentRequest)
+        private async Task<IActionResult> GetCreatePurchaseOrderResponse(SkillRequest skillRequest)
         {
+            var intentRequest = skillRequest.Request as IntentRequest;
+
             // If dialog has state STARTED or IN_PROGRESS, then delegate back to Alexa to elicit and confirm the slots and confirm the whole intent.
             if (intentRequest.DialogState.Equals(DialogState.Started) || intentRequest.DialogState.Equals(DialogState.InProgress))
             {
@@ -78,6 +82,8 @@ namespace AlexaAzureTest1.Web.Controllers
                 if (intentRequest.Intent.ConfirmationStatus == ConfirmationStatus.Confirmed)
                 {
                     message = "Your purchase order is ready. I've emailed you a link.";
+
+                    await SendProgressiveResponse(skillRequest);
                 }
                 else
                 {
@@ -88,8 +94,15 @@ namespace AlexaAzureTest1.Web.Controllers
             }
         }
 
-        private IActionResult GetInvoiceStatusResponse(IntentRequest intentRequest)
+        private async Task SendProgressiveResponse(SkillRequest skillRequest)
         {
+            
+        }
+
+        private async Task<IActionResult> GetInvoiceStatusResponse(SkillRequest skillRequest)
+        {
+            var intentRequest = skillRequest.Request as IntentRequest;
+
             // If dialog has state STARTED or IN_PROGRESS, then delegate back to Alexa to elicit and confirm the slots and confirm the whole intent.
             if (intentRequest.DialogState.Equals(DialogState.Started) || intentRequest.DialogState.Equals(DialogState.InProgress))
             {
