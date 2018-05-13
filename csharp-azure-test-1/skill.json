@@ -15,6 +15,9 @@
                 {
                     "name": "AMAZON.HelpIntent",
                     "samples": [
+                        "what sort of things can you help me with",
+                        "what sort of things do you do",
+                        "what do you do",
                         "what can you help me with",
                         "what can I do",
                         "what can you do",
@@ -35,6 +38,9 @@
                             "name": "InvoiceNumber",
                             "type": "AMAZON.SearchQuery",
                             "samples": [
+                                "which status {InvoiceNumber} is on",
+                                "what status {InvoiceNumber} has",
+                                "the status of invoice {InvoiceNumber}",
                                 "{InvoiceNumber}",
                                 "I'm looking for {InvoiceNumber}",
                                 "it's {InvoiceNumber}",
@@ -104,6 +110,7 @@
                         }
                     ],
                     "samples": [
+                        "do a new purchase order",
                         "create a purchase order against supplier {Supplier}",
                         "create a purchase order for {Supplier}",
                         "create a purchase order please",
@@ -184,25 +191,25 @@
             ]
         },
         "prompts": [
-          {
-            "id": "Elicit.Slot.1103847125025.1210557244109",
-            "variations": [
-              {
-                "type": "PlainText",
-                "value": "Can you please give me the invoice number?"
-              },
-              {
-                "type": "PlainText",
-                "value": "What is the invoice number please?"
-              }
-            ]
-          },
+            {
+                "id": "Elicit.Slot.1103847125025.1210557244109",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What invoice number please?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "What's the invoice number please?"
+                    }
+                ]
+            },
             {
                 "id": "Confirm.Slot.1103847125025.1210557244109",
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "The invoice number I heard was {InvoiceNumber} . Is that correct?"
+                        "value": "I heard  {InvoiceNumber} . Is that right?"
                     }
                 ]
             },
@@ -229,7 +236,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "I heard {Supplier} . Is that correct?"
+                        "value": "I heard {Supplier} . Is that right?"
                     }
                 ]
             },
@@ -263,10 +270,10 @@
             {
                 "id": "Elicit.Slot.447540234527.900172774679",
                 "variations": [
-                    {
-                        "type": "PlainText",
-                        "value": "What date will the purchase order be for?"
-                    }
+                  {
+                    "type": "PlainText",
+                    "value": "What date will the purchase order be for?"
+                  }
                 ]
             }
         ]
